@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+  <style>
+    *{
+      padding:0;
+      margin:0;
+      box-sizing:border-box;
+      font-size:0;
+    }
+    body{
+      position:absolute;
+      width:100%;
+      height:100%;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="mycanvas"></canvas>
+</body>
+
+<script>
+  $.ajax({
+    url:'http://hyjy.oss-cn-shenzhen.aliyuncs.com/33/541322504/other/20171018/20171018142033823562780.jar',
+    type:'jsonp',
+    success:function(d){
+      console.log(d)
+    }
+  })
+</script>
+
+<script>
+  let cm = document.getElementById('mycanvas'),
+    cxt  = cm.getContext('2d'),
+    w = document.body.clientWidth,
+    h = document.body.clientHeight,
+    fps = 10
+
+//  alert(getComputedStyle(window.document.documentElement)['font-size'])13760870743
+
+  cm.width = w
+  cm.height = h
+
+  let obj = [
+    [20,170,60,80,150,30,170,150],
+    [190,30,250,30,320,250]
+  ]
+
+  let leaf = {
+    strokeStyle:"#008000",
+    node:[
+      //root
+      {
+        bx:180,by:0,cp1x:170,cp1y:90,cp2x:150,cp2y:30,x:120,y:270
+      },
+
+      //leaf
+      {
+        bx:120,by:270,cp1x:60,cp1y:80,cp2x:150,cp2y:30,x:170,y:50
+      },
+      {
+        bx:170,by:50,cp1x:190,cp1y:40,cp2x:250,cp2y:30,x:120,y:270
+      },
+
+      //left
+      {
+        bx:160,by:70,cp1x:140,cp1y:85,cp2x:130,cp2y:100,x:104,y:115
+      },
+      {
+        bx:150,by:100,cp1x:130,cp1y:120,cp2x:120,cp2y:135,x:100,y:145
+      },
+      {
+        bx:140,by:140,cp1x:130,cp1y:150,cp2x:125,cp2y:165,x:100,y:185
+      },
+      {
+        bx:133,by:175,cp1x:120,cp1y:200,cp2x:110,cp2y:205,x:105,y:220
+      },
+      {
+        bx:128,by:210,cp1x:125,cp1y:220,cp2x:120,cp2y:230,x:110,y:240
+      },
+
+      //right
+      {
+        bx:160,by:70,cp1x:170,cp1y:85,cp2x:180,cp2y:100,x:190,y:120
+      },
+      {
+        bx:150,by:100,cp1x:160,cp1y:120,cp2x:170,cp2y:135,x:180,y:150
+      },
+      {
+        bx:140,by:140,cp1x:150,cp1y:150,cp2x:160,cp2y:165,x:165,y:185
+      },
+      {
+        bx:133,by:175,cp1x:140,cp1y:200,cp2x:145,cp2y:205,x:147,y:220
+      },
+      {
+        bx:128,by:210,cp1x:133,cp1y:220,cp2x:136,cp2y:230,x:137,y:240
+      },
+    ]
+  }
+
+  let leafObj = {
+    strokeStyle:"#008000",
+    node:[
+      {bx:50,by:50,cp1x:60,cp1y:80,cp2x:150,cp2y:30,x:170,y:150}
+    ]
+  }
+
+  let bezier = {}
+
+  function bezierZoom(obj,num){
+    obj.node.forEach(function(i){
+      for(var j in i){
+        i[j] = i[j]*num
+      }
+    })
+  }
+  bezierZoom(leaf,0.1)
+
+  function bezierChange(obj,x,y){
+    obj.node.forEach(function(i){
+      for(var j in i){
+
+        if(j.indexOf('x') != -1){
+          i[j] += x
+        }else{
+          i[j] += y
+        }
+
+      }
+    })
+  }
+
+
+  let x = 0
+  let SI = setInterval(function(){
+    x++
+//    bezierZoom(leaf,(1000-x)/1000)
+    bezierChange(leaf,1,2)
+    drawBezier(leaf)
+    if(x>fps*2){
+      clearInterval(SI)
+    }
+  },1000/fps)
+
+
+  function drawBezier(obj){
+
+    cxt.clearRect(0,0,cm.width, cm.height);//清除canvas
+
+    cxt.strokeStyle = obj.strokeStyle
+
+    cxt.beginPath();
+
+    obj.node.forEach(function(i){
+      cxt.moveTo(i.bx,i.by);
+      cxt.bezierCurveTo(i.cp1x,i.cp1y,i.cp2x,i.cp2y,i.x,i.y);
+    })
+
+    cxt.stroke();
+
+  }
+
+</script>
+</html>
