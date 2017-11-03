@@ -28,7 +28,10 @@ export default new Router({
     {
       path:'/details/:id',
       name:'details',
-      component:details
+      component:details,
+      // beforeEnter(to, from, next){
+      //   next()
+      // }
     }
   ]
 })

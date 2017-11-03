@@ -6,7 +6,7 @@
       <div class="head">
 
         <div class="grid-2 normal-flex">
-          <router-link v-for="(i,index) in nav.list" :class=" index == nav.cur ? 'cur' : '' " tag="div" :to=" '/'+index+'?id='+i.id " :key="index">{{ i.tit }}</router-link>
+          <router-link v-for="(i,index) in nav.list" :class=" index == nav.cur ? 'cur' : '' " tag="div" :to=" '/'+index+'?id='+i.id " :key="index" replace>{{ i.tit }}</router-link>
         </div>
 
         <div class="grid-3 normal-flex">
@@ -259,6 +259,7 @@
 
         //sl init
         sl.init('#unProcessed',function(){
+
           if( vState.unProcessed.page < vState.unProcessed.zpage ){
 
             vState.unProcessed.loader = true
@@ -272,6 +273,7 @@
         })
 
         sl.init('#isProcessed',function(){
+
           if( vState.isProcessed.page < vState.isProcessed.zpage ){
 
             vState.isProcessed.loader = true
@@ -284,6 +286,23 @@
 
         })
 
+        //设置scrollTop
+        $('#unProcessed').scrollTop( vState.unProcessed.sTop )
+        $('#isProcessed').scrollTop( vState.isProcessed.sTop )
+        //
+
+      },
+      beforeRouteLeave(to,from,next){
+
+        let vm = this , vState = vm.$store.state
+
+        //路由离开前保存两个list的scrollTop值
+        vState.unProcessed.sTop = $('#unProcessed').scrollTop()
+        vState.isProcessed.sTop = $('#isProcessed').scrollTop()
+
+//        console.log($('#unProcessed').scrollTop())
+//        console.log($('#isProcessed').scrollTop())
+        next()
       },
       components:{
         normallist:normallist,
@@ -295,7 +314,6 @@
 
           this.mySwiper.slideTo(to.params.id,300)
 
-          console.log(to)
 
         }
       }

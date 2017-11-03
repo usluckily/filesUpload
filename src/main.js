@@ -20,12 +20,14 @@ const store = new Vuex.Store({
     basic:basic,
     unProcessed:{
       loader:true,
+      sTop:0,
       list:[],
       page:1,
       zpage:''
     },
     isProcessed:{
       loader:true,
+      sTop:0,
       list:[],
       page:1,
       zpage:''

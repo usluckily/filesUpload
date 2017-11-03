@@ -24,6 +24,7 @@ export default{
 
       if(allH - scH <= scrollTop && scroll == true){
         scroll = false
+
         cb(scroll)
 
         setTimeout(function(){
