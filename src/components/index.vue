@@ -213,6 +213,9 @@
           })
         }
 
+        //off upDateList
+        vm.$root.eventHub.$off('updateList')
+
       },
       mounted(){
         let currYear = (new Date()).getFullYear() , vm = this , vState = vm.$store.state , BP = vState.basic
@@ -294,11 +297,32 @@
       },
       beforeRouteLeave(to,from,next){
 
-        let vm = this , vState = vm.$store.state
+        let vm = this , vState = vm.$store.state , BP = vState.basic
 
         //路由离开前保存两个list的scrollTop值
         vState.unProcessed.sTop = $('#unProcessed').scrollTop()
         vState.isProcessed.sTop = $('#isProcessed').scrollTop()
+
+
+        //updateList
+        vm.$root.eventHub.$on('updateList',function(d){
+
+          vm.getList({ isOver:0,stuid:BP.stuTid,page:vm.unProcessed.page },function(d){
+
+            vState.unProcessed.list =  d.data
+            vState.unProcessed.zpage = d.data[0].zpage
+            vState.unProcessed.loader = false
+          })
+
+          vm.getList({ isOver:1,stuid:BP.stuTid,page:vm.isProcessed.page },function(d){
+
+            vState.isProcessed.list =  d.data
+            vState.isProcessed.zpage = d.data[0].zpage
+            vState.isProcessed.loader = false
+          })
+
+        })
+
 
 //        console.log($('#unProcessed').scrollTop())
 //        console.log($('#isProcessed').scrollTop())

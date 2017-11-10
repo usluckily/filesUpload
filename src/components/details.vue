@@ -181,7 +181,9 @@
 
               vm.$root.eventHub.$emit('promptOpen',{ content:'操作成功!' })
 
-              vm.updateList()//本地更新list
+//              vm.updateList()//本地更新list
+
+              vm.$root.eventHub.$emit('updateList')
 
             })
 
@@ -204,7 +206,9 @@
 
               vm.$root.eventHub.$emit('promptOpen',{ content:'操作成功!' })
 
-              vm.updateList()//本地更新list
+//              vm.updateList()//本地更新list
+
+              vm.$root.eventHub.$emit('updateList')
 
             })
 
