@@ -34,7 +34,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 let request = require('request') ,
-  remoteHost = 'http://192.168.0.253:8081' // 实际要请求的地址
+  remoteHost = 'http://120.24.178.171:8080' // 实际要请求的地址
 
 app.all('/school/*',function(req,res,next){
   let url = '' , api = req._parsedUrl.path.replace('/school','')

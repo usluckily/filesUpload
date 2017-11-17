@@ -1,6 +1,6 @@
 <template>
   <ul class="normal-list">
-    <router-link tag='li' class="item" v-for="(i,index) in listData" :to=" '/details/'+i.id " :key="index">
+    <router-link tag='li' class="item" v-for="(i,index) in listData" :to=" '/details/'+i.id " :key="index" >
       <div class="item-bar ">
         <div class="clearfix">
           <div class="head-icon">
@@ -25,7 +25,11 @@
         <p class="item-info">{{ i.title }}</p>
       </div>
       <div class="item-bar">
-        <div class="download">
+        <!--<div class="download-layout"></div>-->
+        <div class="download"
+             @touchstart.stop="hold(i.fileurl,i.filename,$event)"
+             @touchend.stop="up($event)"
+             @click="prompt('长按以下载') ; $event.stopPropagation()">
 
           <div class="img-box">
             <img src="../../assets/img/link.png"/>
@@ -50,11 +54,50 @@
       props:{
         listData:{
           type:Array,
-          default:[]
+          default:[],
+          SI:''
         }
       },
       data(){
         return {}
+      },
+      methods:{
+        hold(href,name,e,t){
+          let vm = this , count = 0
+
+          if(e.target.className.indexOf('download') != -1){
+            e.target.className = 'download cur'
+          }
+
+          vm.SI = setInterval(function(){
+            count+=100
+            if(count>500){
+              clearInterval(vm.SI)
+              if(navigator.vibrate){
+                navigator.vibrate(100)
+
+                if(window.GreenSchool){
+                  GreenSchool.toDownloadFile(href,name)
+                }else{
+
+                }
+
+              }
+            }
+          },100)
+        },
+        up(e){
+          let vm = this
+
+          if(e.target.className.indexOf('download') != -1){
+            e.target.className = 'download'
+          }
+
+          clearInterval(vm.SI)
+        },
+        prompt(d){
+          this.$root.eventHub.$emit('promptOpen',{ content:d })
+        }
       },
       filters:{
         timeFilter(val){

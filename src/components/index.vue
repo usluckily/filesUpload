@@ -41,6 +41,8 @@
           <div class="swiper-wrapper">
             <div class="swiper-slide" id="unProcessed">
 
+              <m_tips tips="暂时没有数据" v-show="unProcessed.list <= 0"></m_tips>
+
               <m_ballPulse v-if=" unProcessed.loader "></m_ballPulse>
 
               <normallist :listData="unProcessed.list"></normallist>
@@ -48,9 +50,11 @@
 
             <div class="swiper-slide" id="isProcessed">
 
+              <m_tips tips="暂时没有数据" v-show="unProcessed.list <= 0"></m_tips>
+
               <m_ballPulse v-if=" isProcessed.loader "></m_ballPulse>
 
-              <normallist :listData="isProcessed.list"></normallist>
+              <normallist :listData="unProcessed.list"></normallist>
             </div>
 
           </div>
@@ -73,6 +77,7 @@
 
   require('@/assets/js/mobiscroll.js')
 
+  import tips from '@/components/common/nodatatips'
   import normallist from '@/components/common/normallist'
   import ballPulse from '@/components/loader/ballpulse'
 
@@ -199,7 +204,7 @@
           vm.getList({ isOver:0,stuid:BP.stuTid,page:vm.unProcessed.page },function(d){
 
             vState.unProcessed.list =  d.data
-            vState.unProcessed.zpage = d.data[0].zpage
+            d.data.length ? vState.unProcessed.zpage = d.data[0].zpage : ''
             vState.unProcessed.loader = false
           })
         }
@@ -208,7 +213,7 @@
           vm.getList({ isOver:1,stuid:BP.stuTid,page:vm.isProcessed.page },function(d){
 
             vState.isProcessed.list =  d.data
-            vState.isProcessed.zpage = d.data[0].zpage
+            d.data.length ? vState.isProcessed.zpage = d.data[0].zpage : ''
             vState.isProcessed.loader = false
           })
         }
@@ -330,7 +335,8 @@
       },
       components:{
         normallist:normallist,
-        m_ballPulse:ballPulse
+        m_ballPulse:ballPulse,
+        m_tips:tips,
       },
       watch:{
         '$route'(to,from){

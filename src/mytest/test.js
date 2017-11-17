@@ -13,6 +13,8 @@ function animals(type){
   this.type = type
 }
 
+document.getElementById()
+
 animals.prototype.say = function(){
   console.log(this.type+' say '+this.sound)
 }

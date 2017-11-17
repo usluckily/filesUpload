@@ -165,7 +165,23 @@ a, button, input, textarea {
 .item .item-bar{
   width:100%;
   padding:0.2rem 0;
+  position: relative;
 }
+
+.download-layout{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#999;
+  opacity:0;
+  transition:opacity 0.3s;
+}
+.download-layout.cur{
+  opacity:0.5;
+}
+
 .item-bar .head-icon{
   width:3rem;
   height:3rem;
@@ -204,6 +220,8 @@ a, button, input, textarea {
 
 .item .item-info{
   color:#333;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .head-icon img{
@@ -224,7 +242,12 @@ a, button, input, textarea {
   background:#EFEFF3;
   display:flex;
   align-items:center;
+  transition:background 0.3s
 }
+.download.cur{
+  background:#d7d7d7;
+}
+
 .download .img-box{
   width:2.2rem;
 }
@@ -290,6 +313,8 @@ a, button, input, textarea {
   font-size:1.5rem;
   color:#333;
   line-height: 2rem;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .handler-list{
