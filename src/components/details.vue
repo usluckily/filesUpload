@@ -5,6 +5,8 @@
 
       <rBox :show=" rboxShow "></rBox>
 
+      <readbox :readlist="readlist"></readbox>
+
       <div class="content">
 
         <div class="con-box">
@@ -27,14 +29,15 @@
                     <h4 class="normal-flex">
                       <div>
                         {{ details.tname }}&nbsp;
-                        <span class="group">{{ details.dname }}</span>
+                        <span class="group">{{ details.dname | dnameFilter }}</span>
                       </div>
                       <div class="status" style="display:flex;align-items:center;">
-                        <span style="display:block;width:0.5rem;height:0.5rem;border-radius:50%;"></span>
+                        <!--<span style="display:block;width:0.5rem;height:0.5rem;border-radius:50%;background:red"></span>-->
                         &nbsp;
                         <span>{{ details.state | stateToCnFilter }}</span>
                       </div>
                     </h4>
+                    <!--<p><span class="">{{ details.dname | dnameFilter }}</span></p>-->
                     <p class="item-time">
                       <span>{{ details.uptime | timeFilter }}</span>
                       <span :class=" details.deal == '已完成' ? 'c_gray' : 'c_yellow' ">{{ details.deal }}</span>
@@ -66,7 +69,7 @@
         <div class="con-box clearfix">
           <div style="width:4rem;float:left;line-height: 2rem;color:#999;">处理人：</div>
           <div class="handler-list">
-            <div v-for=" i in details.dealuser " class="handler">
+            <div v-for=" i in details.dealuser " class="handler" @click="getReadUser">
               <div class="img-box">
                 <img :src="i.tpic" v-if=" i.tpic && i.tpic != '' "/>
                 <img src="../assets/img/logo.png" v-else/>
@@ -80,28 +83,29 @@
           <div class="status-list">
             <h4>流程信息:</h4>
 
-            <div class="item" v-for="i in reverseProcess" :style="{ color:i.state == 0 ? '#777' : '#999' }">
-
+            <div class="item" v-for="i in reverseProcess" :style="{ color:i.state == 0 ? '#777' : '#999' }" @click="selectProcessor(i,$event)">
               <div class="icon-box">
                 <img src="../assets/img/clock.png" class="icon" v-if="i.state == 0"/>
+                <img src="../assets/img/change.png" class="icon" v-else-if="i.select"/>
                 <img src="../assets/img/hook.png" class="icon" v-else/>
               </div>
 
               <div class="con">
                 <p>{{ i.pro | processFilter(i.state) }}  <span>{{ i.time | timeFilter }}</span></p>
-                <div class="msg"></div>
+                <div class="msg" v-show="i.reply">
+                  <div class="arrow-up"></div>
+                  {{ i.reply }}
+                </div>
               </div>
 
             </div>
-
-
 
           </div>
         </div>
 
       </div>
 
-      <div class="fbtn-box">
+      <div class="fbtn-box" v-if="type != 0">
         <div class="fbtn" v-if=" type == '2' " @click=" changeFileDetail(2) ">回复</div>
         <!--处理人-->
 
@@ -139,8 +143,10 @@
   import ajax from '@/assets/js/ajax'
   import IF from '@/assets/js/interface'
   import date from '@/assets/js/date'
+  import filters from '@/assets/js/filters'
 
   import rBox from '@/components/common/replybox'
+  import readbox from '@/components/common/readbox'
 
     export default({
       name: 'details',
@@ -154,7 +160,9 @@
             process:[]
           },
           rboxShow:false,
-          type:''
+          type:'',
+          readlist:[],
+          processorObj:{}
         }
       },
       methods:{
@@ -195,12 +203,18 @@
         changeFileDetail(state){
           //处理人处理此文件任务->审批人审核处理情况 阶段
 
-          let vm = this
+          let vm = this , fduid
           vm.rboxShow = true
+
+          alert(JSON.stringify(vm.processorId))
+
+          if(vm.processorId.length > 0){
+            fduid = vm.processorId
+          }
 
           vm.$root.eventHub.$on('rbox-ok',function(d){
 
-            ajax.post(IF.changeFileDetail,{ id:vm.id,stuid:vm.BP.stuTid,state:state,reply:d.reply },function(d){
+            ajax.post(IF.changeFileDetail,{ id:vm.id,stuid:vm.BP.stuTid,state:state,reply:d.reply,fduid:fduid },function(d){
 
               vm.getDetails()
 
@@ -223,60 +237,49 @@
             vm.details = d
             vm.type = d.type
           },['title','description'])
-        }
-      },
-      filters:{
-        timeFilter(val){
+        },
+        getReadUser(){
+          let vm = this
 
-          if(val == ''){
+          if(vm.type == '2' || vm.type == '0'){//处理人，非审批人
             return
           }
 
-          let date = val.split(' ')[0], time = val.split(' ')[1].substring(0,5)
+          vm.$root.eventHub.$emit('readbox-open')
+          ajax.post(IF.getReadUser,{ id:vm.$route.params.id },function(d){
+              vm.readlist = d.data
+          })
+        },
+        selectProcessor(i,e){
+          if(!i.id || this.type != '3')return
 
-          if( date === date.years+'-'+date.month+'-'+date.days ){
-            return '今天  ' + time
+          let vm = this , node = e.target , pNode
+
+          function findP(node){
+            if(node.tagName != 'DIV' || node.className != 'item'){
+              node = node.parentNode
+              findP(node)
+            }else{
+              pNode = node
+            }
+          }
+          findP(node)
+
+          if(JSON.stringify(vm.processorObj).indexOf(i.id) != -1){
+            delete pNode.dataset.select
+            delete vm.processorObj[i.id]
+            vm.$set(i,'select',false)
           }else{
-            return date+' '+time
+            pNode.dataset.select = 'select'
+            vm.processorObj[i.id] = i.id
+            vm.$set(i,'select',true) //在 i 中添加select属性用以判断是否选中
           }
 
+          console.log(vm.processorObj)
         },
-        filesizeFilter(val){
-          let res = 0 , x = 0 , unit = ['B','K','M','G']
-          while(val>=1024){
-            val = res = val/1024
-            x++
-          }
-          return res.toFixed(2) + unit[x]
-        },
-        processFilter(val,state){
-
-          if(state == 0){
-            return '等待审核'
-          }else{
-            return val
-          }
-
-
-        },
-        stateToCnFilter(val){
-          let res = ''
-          switch(val){
-            case '0':
-              res = '一般';
-              break;
-            case '1':
-              res = '普通';
-              break
-            case '2':
-              res = '重要';
-              break
-            case '3':
-              res = '紧急';
-              break
-          }
-          return res
-        }
+      },
+      filters:{
+        ...filters
       },
       computed:{
         reverseProcess(){
@@ -286,6 +289,16 @@
             arr.push(vm.details.process[i])
           }
           return arr
+        },
+        processorId(){
+          let vm = this , res = ''
+
+          for(var i in  vm.processorObj){
+            res += '['+vm.processorObj[i]+'],'
+          }
+
+          console.log('res:'+res)
+          return res
         }
       },
       created(){
@@ -311,7 +324,8 @@
         }
       },
       components:{
-        rBox:rBox
+        rBox:rBox,
+        readbox:readbox
       }
     })
 </script>

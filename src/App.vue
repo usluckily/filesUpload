@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <m_prompt></m_prompt>
+    <m_modal></m_modal>
     <router-view/>
   </div>
 </template>
@@ -9,6 +10,7 @@
   import base from '@/assets/js/base'
 
   import prompt from '@/components/common/prompt'
+  import modal from '@/components/common/modal'
 
   export default {
     name: 'app',
@@ -16,7 +18,8 @@
       base.rootFontSize()
     },
     components:{
-      m_prompt:prompt
+      m_prompt:prompt,
+      m_modal:modal
     }
   }
 </script>

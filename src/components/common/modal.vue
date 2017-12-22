@@ -1,12 +1,10 @@
 <template >
 
-  <div class="blackBg-layout" style="z-index:106;" v-if="locShow">
+  <div class="blackBg-layout" style="z-index:106;" v-if="show">
     <div class="reply-box" >
       <div class="rbox-head">{{ title }}</div>
       <div class="rbox-con">
-      <textarea placeholder="请输入回复内容(必填)" v-model="replyMsg">
-
-      </textarea>
+        {{ content }}
       </div>
       <div class="rbox-ft">
         <div class="fbtn" @click="close">{{ leftBtn.text }}</div>
@@ -20,15 +18,14 @@
     export default({
       name: 'replybox',
       props:{
-        show:{
-          type:Boolean,
-          default:false
-        }
+
       },
       data(){
         return {
-          title:'回复',
+          title:'提示',
           replyMsg:'',
+          show:false,
+          content:'',
           leftBtn:{
             text:'取消'
           },
@@ -38,33 +35,37 @@
         }
       },
       computed:{
-        locShow(){
-          this.replyMsg = ''
-          return this.show
-        }
+
       },
       methods:{
         close(){
-          this.$root.eventHub.$emit('rbox-close')
+          this.$root.eventHub.$emit('modal-close')
         },
         ok(){
           let vm = this
-          if( vm.replyMsg.trim() == '' ){
-            vm.$root.eventHub.$emit('promptOpen',{ content:'请输入留言' })
-            return
-          }
-          vm.$root.eventHub.$emit('rbox-ok',{ reply:vm.replyMsg })
+          vm.$root.eventHub.$emit('modal-ok')
         }
       },
       created(){
-
+        let vm = this
+        vm.$root.eventHub.$on('modal-open',function(d){
+          vm.content = d.content
+          vm.show = true
+        })
+        vm.$root.eventHub.$on('modal-close',function(){
+          vm.show = false
+        })
+      },
+      beforeDestroy(){
+        this.$root.eventHub.$off('modal-open')
+        this.$root.eventHub.$off('modal-close')
       },
       watch:{
 
       }
     })
 </script>
-<style>
+<style scoped>
   .reply-box{
     width:90%;
     max-width:20rem;
@@ -81,15 +82,14 @@
   }
   .rbox-con{
     width:100%;
-  }
-  .rbox-con textarea{
-    width:100%;
     border:none;
-    background:#EFEFF3;
     height:7rem;
-    padding:0.5rem;
-    font-size:0.85rem;
+    padding:1rem;
+    font-size:0.9rem;
     color:#777;
+    border-top:1px solid #eee;
+    border-bottom:1px solid #eee;
+    text-align:center;
   }
   .rbox-ft{
     width:100%;

@@ -11,9 +11,9 @@
           </div>
           <div class="head-con">
             <h4 class="normal-flex">
-              <div>
+              <div class="normal-flex">
                 {{ i.uploaduser }}&nbsp;
-                <span class="group">{{ i.depart }}</span>
+                <span class="group">{{ i.depart | dnameFilter }}</span>
               </div>
               <div :class=" i.deal == '已完成' ? 'status c_gray' : 'status c_yellow' ">{{ i.deal }}</div>
             </h4>
@@ -26,10 +26,26 @@
       </div>
       <div class="item-bar">
         <!--<div class="download-layout"></div>-->
-        <div class="download"
-             @touchstart.stop="hold(i.fileurl,i.filename,$event)"
-             @touchend.stop="up($event)"
-             @click="prompt('长按以下载') ; $event.stopPropagation()">
+
+        <!--长按下载-->
+        <!--<div class="download"-->
+             <!--@touchstart.stop="hold(i.fileurl,i.filename,$event)"-->
+             <!--@touchend.stop="up($event)"-->
+             <!--@click="prompt('长按以下载') ; $event.stopPropagation()">-->
+
+          <!--<div class="img-box">-->
+            <!--<img src="../../assets/img/link.png"/>-->
+          <!--</div>-->
+
+          <!--<div class="info-box">-->
+            <!--<p>{{ i.filename }}</p>-->
+            <!--<span>{{ i.filesize | filesizeFilter }}</span>-->
+          <!--</div>-->
+
+        <!--</div>-->
+
+        <!--点击下载-->
+        <div class="download" @click="modalShow($event,i.fileurl,i.filename)">
 
           <div class="img-box">
             <img src="../../assets/img/link.png"/>
@@ -41,6 +57,7 @@
           </div>
 
         </div>
+
       </div>
     </router-link>
   </ul>
@@ -48,6 +65,7 @@
 </template>
 <script>
   import date from '@/assets/js/date'
+  import filters from '@/assets/js/filters'
 
     export default({
       name: 'normallist',
@@ -62,6 +80,20 @@
         return {}
       },
       methods:{
+        modalShow(e,href,name){
+          let vm = this
+          e.stopPropagation()
+          vm.$root.eventHub.$emit('modal-open',{ content:'是否下载"'+name+'"' })
+          vm.$root.eventHub.$on('modal-ok',function(){
+            if(window.GreenSchool){
+              GreenSchool.toDownloadFile(href,name)
+            }else if(window.iosParams.isIosApp){
+              window.external.downLoadFile(name+','+href)
+            }
+            vm.$root.eventHub.$off('modal-ok')
+            vm.$root.eventHub.$emit('modal-close')
+          })
+        },
         hold(href,name,e,t){
           let vm = this , count = 0
 
@@ -71,15 +103,18 @@
 
           vm.SI = setInterval(function(){
             count+=100
-            if(count>500){
+            if(count>800){
               clearInterval(vm.SI)
               if(navigator.vibrate){
                 navigator.vibrate(100)
-
                 if(window.GreenSchool){
                   GreenSchool.toDownloadFile(href,name)
-                }else{
-
+                }
+              }else{
+                if(window.GreenSchool){
+                  GreenSchool.toDownloadFile(href,name)
+                }else if(window.iosParams.isIosApp){
+                  window.external.downLoadFile(name+','+href)
                 }
 
               }
@@ -100,25 +135,11 @@
         }
       },
       filters:{
-        timeFilter(val){
-          let date = val.split(' ')[0], time = val.split(' ')[1].substring(0,5)
-
-          if( date === date.years+'-'+date.month+'-'+date.days ){
-            return '今天  ' + time
-          }else{
-            return date+' '+time
-          }
-
-        },
-        filesizeFilter(val){
-          let res = 0 , x = 0 , unit = ['B','K','M','G','T']
-          while(val>=1024){
-            val = res = val/1024
-            x++
-          }
-          return res.toFixed(2) + unit[x]
-        }
+        ...filters
       },
+      components:{
+
+      }
     })
 </script>
 <style>

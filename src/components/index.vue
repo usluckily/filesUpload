@@ -3,6 +3,8 @@
   <transition name="page">
     <div class="all">
 
+      <rBox :show=" rboxShow "></rBox>
+
       <div class="head">
 
         <div class="grid-2 normal-flex">
@@ -50,11 +52,11 @@
 
             <div class="swiper-slide" id="isProcessed">
 
-              <m_tips tips="暂时没有数据" v-show="unProcessed.list <= 0"></m_tips>
+              <m_tips tips="暂时没有数据" v-show="isProcessed.list <= 0"></m_tips>
 
               <m_ballPulse v-if=" isProcessed.loader "></m_ballPulse>
 
-              <normallist :listData="unProcessed.list"></normallist>
+              <normallist :listData="isProcessed.list"></normallist>
             </div>
 
           </div>
@@ -80,6 +82,7 @@
   import tips from '@/components/common/nodatatips'
   import normallist from '@/components/common/normallist'
   import ballPulse from '@/components/loader/ballpulse'
+  import rBox from '@/components/common/replybox'
 
     export default({
       name: 'index',
@@ -106,7 +109,8 @@
           stateText:'全部状态',
           searchText:'',
           stateBoxShow:false,
-          searchBoxShow:false
+          searchBoxShow:false,
+          rboxShow:false
         }
       },
       methods:{
@@ -337,6 +341,7 @@
         normallist:normallist,
         m_ballPulse:ballPulse,
         m_tips:tips,
+        rBox:rBox
       },
       watch:{
         '$route'(to,from){

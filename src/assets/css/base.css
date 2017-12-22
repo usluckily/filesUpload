@@ -55,6 +55,10 @@ a, button, input, textarea {
   -webkit-backface-visibility: hidden;
 }
 
+.nothing-layout{
+  /*pointer-events:none;*/
+}
+
 .clearfix:before,
 .clearfix:after{
   content: '';
@@ -89,6 +93,7 @@ a, button, input, textarea {
 
 .normal-flex{
   display:flex;
+  align-items:center;
 }
 .grid-2 , .grid-3{
   padding:0.75rem 0;
@@ -207,6 +212,10 @@ a, button, input, textarea {
 .head-con .group{
   font-size:0.8rem;
   color:#999;
+  max-width: 6rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow:ellipsis;
 }
 .head-con .status{
   font-size:0.9rem;
@@ -262,6 +271,8 @@ a, button, input, textarea {
 .download .info-box p{
   font-size:0.8rem;
   line-height:0.9rem;
+  white-space:normal;
+  word-break: break-all;
 }
 .download .info-box span{
   font-size:0.7rem;
@@ -353,10 +364,22 @@ a, button, input, textarea {
 }
 .status-list .item{
   display:flex;
-  align-items:center;
+  /*align-items:center;*/
   margin:1rem 0 2rem 0;
   font-size:0.95rem;
 }
+
+
+
+/*[data-select]{*/
+  /*background:#000;*/
+/*}*/
+/*.item[data-select] .icon-box img{*/
+  /*display:none;*/
+/*}*/
+/*.item[data-select] .icon-box img.selectShow{*/
+  /*display:block;*/
+/*}*/
 
 .status-list .item .icon-box{
 
@@ -365,6 +388,25 @@ a, button, input, textarea {
   padding-left:1rem;
   width: 100%;
 }
+.status-list .item .con .msg{
+  background:#EFEFF3;
+  padding:0.5rem;
+  border-radius:0.2rem;
+  position:relative;
+  margin-top:1rem;
+  color:#666;
+}
+
+.status-list .item .con .msg .arrow-up {
+  width:0;
+  height:0;
+  border-left:8px solid transparent;
+  border-right:8px solid transparent;
+  border-bottom:8px solid #EFEFF3;
+  position:absolute;
+  top:-8px
+}
+
 .status-list .item .con p{
   line-height:1rem;
 }

@@ -79,19 +79,24 @@ export default{
       async:true,
       timeout:10000,
       success(d){
-        // alert(d)
         let res
 
         // console.log(d.replace(/\s/g, ""))
         // console.log(d);
 
-        if(typeof d == 'string' && d != 'success'){
+        if(d == 'success'){
+          cb(d)
+          return
+        }
+
+        if(typeof d == 'string'){
           try{
             res = JSON.parse(d)
           }catch(e){
             throw e
           }
         }
+
         if(trans){
           res = transd(trans,res)
         }

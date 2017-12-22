@@ -10,7 +10,7 @@ import utils from './assets/js/utils'
 
 Vue.config.productionTip = false
 
-let basic = {userid:'347019965',sid:'40',perm:['XKBM'],roleid:'2460,2481',stuTid:'347019965',role:'SPR',roleFlag:''};
+let basic = {userid:'330356574',sid:'4',perm:['XKBM'],roleid:'2460,2481',stuTid:'811994941',role:'SPR',roleFlag:''};
 
 Vue.use(Vuex)
 Vue.use(utils)
