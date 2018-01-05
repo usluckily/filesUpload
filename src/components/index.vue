@@ -32,7 +32,7 @@
                  v-model="searchText"
                  @keyup="isEnter($event.keyCode)"
           />
-          <img src="../assets/img/search-cancle-icon.png"/>
+          <img src="../assets/img/search-cancle-icon.png" @click=" searchText = '' "/>
         </div>
       </div>
       <!--searchBox-->

@@ -92,9 +92,9 @@
 
               <div class="con">
                 <p>{{ i.pro | processFilter(i.state) }}  <span>{{ i.time | timeFilter }}</span></p>
-                <div class="msg" v-show="i.reply">
+                <div class="msg" v-show="i.reply || i.answer">
                   <div class="arrow-up"></div>
-                  {{ i.reply }}
+                  {{ i.answer ? '驳回理由：'+i.answer : i.reply }}
                 </div>
               </div>
 
@@ -206,7 +206,7 @@
           let vm = this , fduid
           vm.rboxShow = true
 
-          alert(JSON.stringify(vm.processorId))
+//          alert(JSON.stringify(vm.processorId))
 
           if(vm.processorId.length > 0){
             fduid = vm.processorId
