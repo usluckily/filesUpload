@@ -20,8 +20,8 @@ a, button, input, textarea {
 }
 
 input,textarea,button{
-  outline:none;
-}
+   outline:none;
+ }
 
 ul, li, ol {
   list-style: none;
@@ -239,7 +239,7 @@ a, button, input, textarea {
 }
 
 #textSearch span{
-  max-width:4rem;
+  width:4rem;
   display:block;
   white-space:nowrap;
   overflow:hidden;

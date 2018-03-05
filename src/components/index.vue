@@ -14,7 +14,10 @@
         <div class="grid-3 normal-flex">
           <div id="startdate" @click="stateBoxShow = false , searchBoxShow = false"> <span>{{ selectDate == '' ? '全部日期' : selectDate }}</span> <img class="icon" src="../assets/img/arrow.png"/> </div>
           <div @click="stateBoxShow = !stateBoxShow , searchBoxShow = false"> <span>{{ stateText }}</span> <img class="icon" src="../assets/img/arrow.png"/> </div>
-          <div @click="searchBoxShow = !searchBoxShow , stateBoxShow = false" id="textSearch"> <span>{{ searchText == '' ? '搜索' : searchText }}</span> <img class="icon" src="../assets/img/search.png" style="width:1.2rem;"/> </div>
+          <div id="textSearch">
+            <span @click="searchBoxShow = !searchBoxShow , stateBoxShow = false">{{ searchText == '' ? '搜索' : searchText }}</span>
+            <img class="icon" src="../assets/img/search.png" style="width:1.2rem;" @click="isEnter(13)"/>
+          </div>
         </div>
 
       </div>
@@ -157,7 +160,7 @@
 
         isEnter(k){
           let vm = this
-          if(k == 13){
+          if(k == 13 && vm.searchBoxShow){
             vm.search()
             vm.searchBoxShow = false
           }
@@ -332,9 +335,6 @@
 
         })
 
-
-//        console.log($('#unProcessed').scrollTop())
-//        console.log($('#isProcessed').scrollTop())
         next()
       },
       components:{

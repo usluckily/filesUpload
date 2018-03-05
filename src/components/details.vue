@@ -236,12 +236,13 @@
           ajax.post(IF.getFileDetails,{ id:vm.id,stuid:vm.BP.stuTid },function(d){
             vm.details = d
             vm.type = d.type
+            vm.processorObj = {}
           },['title','description'])
         },
         getReadUser(){
           let vm = this
 
-          if(vm.type == '2' || vm.type == '0'){//处理人，非审批人
+          if(vm.type == '2' || vm.type == '0' ){//处理人，非审批人
             return
           }
 
@@ -251,7 +252,7 @@
           })
         },
         selectProcessor(i,e){
-          if(!i.id || this.type != '3')return
+          if(!i.id || this.type != '3' || i.state != '1')return //state1就是可以选，2就是不能选
 
           let vm = this , node = e.target , pNode
 
